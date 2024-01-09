@@ -10,26 +10,32 @@ import {TriggerTestSetup} from "./utils/TriggerTestSetup.sol";
 contract OwnableTriggerTest is TriggerTestSetup {
   OwnableTriggerFactory factory = new OwnableTriggerFactory();
 
+  address owner = address(0xBEEF);
+
   function testFuzz_deployOwnableTriggerWithFactory(address _owner, bytes32 _salt) public {
+    vm.assume(_owner != address(0));
     address _computedAddress = factory.computeTriggerAddress(_owner, _salt);
     OwnableTrigger trigger = factory.deployTrigger(_owner, _salt);
     assertEq(trigger.owner(), _owner);
     assertEq(_computedAddress, address(trigger));
   }
 
+  function test_deployOwnableTrigger_revertsOnZeroAddress() public {
+    vm.expectRevert(Ownable.InvalidAddress.selector);
+    new OwnableTrigger(address(0));
+  }
+
   function test_triggerOwnableTrigger() public {
-    address _owner = _randomAddress();
-    OwnableTrigger trigger = new OwnableTrigger(_owner);
+    OwnableTrigger trigger = new OwnableTrigger(owner);
     assertEq(trigger.state(), TriggerState.ACTIVE);
 
-    vm.prank(_owner);
+    vm.prank(owner);
     trigger.runProgrammaticCheck();
     assertEq(trigger.state(), TriggerState.TRIGGERED);
   }
 
   function test_triggerOwnableTriggerUnauthorized() public {
-    address _owner = _randomAddress();
-    OwnableTrigger trigger = new OwnableTrigger(_owner);
+    OwnableTrigger trigger = new OwnableTrigger(owner);
     assertEq(trigger.state(), TriggerState.ACTIVE);
 
     vm.expectRevert(Ownable.Unauthorized.selector);
@@ -38,15 +44,14 @@ contract OwnableTriggerTest is TriggerTestSetup {
   }
 
   function test_transferOwnership() public {
-    address _owner = _randomAddress();
-    OwnableTrigger trigger = new OwnableTrigger(_owner);
-    assertEq(trigger.owner(), _owner);
+    OwnableTrigger trigger = new OwnableTrigger(owner);
+    assertEq(trigger.owner(), owner);
 
     address _newOwner = _randomAddress();
 
-    vm.prank(_owner);
+    vm.prank(owner);
     trigger.transferOwnership(_newOwner);
-    assertEq(trigger.owner(), _owner);
+    assertEq(trigger.owner(), owner);
     assertEq(trigger.pendingOwner(), _newOwner);
 
     vm.prank(_newOwner);
@@ -56,18 +61,17 @@ contract OwnableTriggerTest is TriggerTestSetup {
   }
 
   function test_transferOwnershipUnauthorized() public {
-    address _owner = _randomAddress();
-    OwnableTrigger trigger = new OwnableTrigger(_owner);
-    assertEq(trigger.owner(), _owner);
+    OwnableTrigger trigger = new OwnableTrigger(owner);
+    assertEq(trigger.owner(), owner);
 
     address _newOwner = _randomAddress();
 
     vm.expectRevert(Ownable.Unauthorized.selector);
     trigger.transferOwnership(_newOwner);
 
-    vm.prank(_owner);
+    vm.prank(owner);
     trigger.transferOwnership(_newOwner);
-    assertEq(trigger.owner(), _owner);
+    assertEq(trigger.owner(), owner);
     assertEq(trigger.pendingOwner(), _newOwner);
 
     vm.expectRevert(Ownable.Unauthorized.selector);

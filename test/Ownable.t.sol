@@ -37,33 +37,33 @@ contract OwnableInitializedTest is OwnableTestSetup {
   }
 
   function test_TransferOwnership() public {
-    address newOwner_ = _randomAddress();
+    address _newOwner = _randomAddress();
     _expectEmit();
-    emit OwnershipTransferStarted(owner, newOwner_);
+    emit OwnershipTransferStarted(owner, _newOwner);
     vm.prank(owner);
-    ownable.transferOwnership(newOwner_);
+    ownable.transferOwnership(_newOwner);
 
     // Owner is not updated yet, but the pending owner is.
-    assertEq(ownable.pendingOwner(), newOwner_);
+    assertEq(ownable.pendingOwner(), _newOwner);
     assertEq(ownable.owner(), owner);
 
     _expectEmit();
-    emit OwnershipTransferred(owner, newOwner_);
-    vm.prank(newOwner_);
+    emit OwnershipTransferred(owner, _newOwner);
+    vm.prank(_newOwner);
     ownable.acceptOwnership();
 
     // Owner is updated, and the pending owner is reset.
     assertEq(ownable.pendingOwner(), address(0));
-    assertEq(ownable.owner(), newOwner_);
+    assertEq(ownable.owner(), _newOwner);
   }
 
   function test_TransferOwnershipUnauthorized() public {
-    address newOwner_ = _randomAddress();
-    address caller_ = _randomAddress();
+    address _newOwner = _randomAddress();
+    address _caller = _randomAddress();
 
     vm.expectRevert(Ownable.Unauthorized.selector);
-    vm.prank(caller_);
-    ownable.transferOwnership(newOwner_);
+    vm.prank(_caller);
+    ownable.transferOwnership(_newOwner);
   }
 
   function test_TransferOwnershipRevertsIfNewOwnerIsZeroAddress() public {
@@ -73,16 +73,16 @@ contract OwnableInitializedTest is OwnableTestSetup {
   }
 
   function test_AcceptOwnershipUnauthorized() public {
-    address newOwner_ = _randomAddress();
-    address caller_ = _randomAddress();
+    address _newOwner = _randomAddress();
+    address _caller = _randomAddress();
 
     _expectEmit();
-    emit OwnershipTransferStarted(owner, newOwner_);
+    emit OwnershipTransferStarted(owner, _newOwner);
     vm.prank(owner);
-    ownable.transferOwnership(newOwner_);
+    ownable.transferOwnership(_newOwner);
 
     vm.expectRevert(Ownable.Unauthorized.selector);
-    vm.prank(caller_);
+    vm.prank(_caller);
     ownable.acceptOwnership();
   }
 }

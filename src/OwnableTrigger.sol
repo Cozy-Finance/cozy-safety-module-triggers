@@ -6,7 +6,9 @@ import {Ownable} from "./lib/Ownable.sol";
 import {TriggerState} from "./structs/StateEnums.sol";
 
 contract OwnableTrigger is BaseTrigger, Ownable {
-  constructor(address _owner) Ownable(_owner) {}
+  constructor(address _owner) Ownable(_owner) {
+    _assertAddressNotZero(_owner);
+  }
 
   /// @notice Callable by the owner to transition the state of the trigger to triggered.
   function runProgrammaticCheck() external onlyOwner {
