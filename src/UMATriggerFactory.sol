@@ -62,6 +62,9 @@ contract UMATriggerFactory {
   /// @dev Thrown when the trigger address computed by the factory does not match deployed address.
   error TriggerAddressMismatch();
 
+  /// @dev Thrown when the trigger has already been deployed with the given config.
+  error AlreadyDeployed();
+
   constructor(OptimisticOracleV2Interface _oracle) {
     oracle = _oracle;
   }
@@ -110,6 +113,7 @@ contract UMATriggerFactory {
 
     _vars.configId =
       triggerConfigId(_query, _rewardToken, _rewardAmount, _refundRecipient, _bondAmount, _proposalDisputeWindow);
+    if (exists[_vars.configId]) revert AlreadyDeployed();
 
     exists[_vars.configId] = true;
     _vars.salt = _getSalt(_vars.configId, _rewardAmount);

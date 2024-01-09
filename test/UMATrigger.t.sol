@@ -505,6 +505,67 @@ contract DeployTriggerSharedTest is TriggerTestSetup {
     // The market should now be back to active so that funds can be withdrawn.
     assertEq(_trigger.state(), TriggerState.ACTIVE);
   }
+
+  function testFork_CannotDeploySameTriggerTwice() internal {
+    // Avoids stack-too-deep errors.
+    VarsForSettlesRequestsTest memory _vars;
+
+    vm.selectFork(forkId);
+    _vars.rewardAmount = 42;
+    _vars.bondAmount = 4200;
+    _vars.proposalDisputeWindow = 2 days;
+    _vars.query = string(abi.encodePacked("q: Has protocol XYZ been hacked?"));
+
+    deal(address(rewardToken), address(this), _vars.rewardAmount * 2);
+    rewardToken.approve(address(factory), _vars.rewardAmount * 2);
+
+    factory.deployTrigger(
+      _vars.query,
+      rewardToken,
+      _vars.rewardAmount,
+      refundRecipient,
+      _vars.bondAmount,
+      _vars.proposalDisputeWindow,
+      TriggerMetadata(
+        "XYZ hack trigger",
+        "XYZ Category",
+        "A trigger that will toggle if XYZ is hacked",
+        "https://via.placeholder.com/150"
+      )
+    );
+
+    vm.expectRevert(UMATriggerFactory.AlreadyDeployed.selector);
+    factory.deployTrigger(
+      _vars.query,
+      rewardToken,
+      _vars.rewardAmount,
+      refundRecipient,
+      _vars.bondAmount,
+      _vars.proposalDisputeWindow,
+      TriggerMetadata(
+        "XYZ hack trigger",
+        "XYZ Category",
+        "A trigger that will toggle if XYZ is hacked",
+        "https://via.placeholder.com/150"
+      )
+    );
+
+    // Does not revert with different reward amount.
+    factory.deployTrigger(
+      _vars.query,
+      rewardToken,
+      _vars.rewardAmount - 1,
+      refundRecipient,
+      _vars.bondAmount,
+      _vars.proposalDisputeWindow,
+      TriggerMetadata(
+        "XYZ hack trigger",
+        "XYZ Category",
+        "A trigger that will toggle if XYZ is hacked",
+        "https://via.placeholder.com/150"
+      )
+    );
+  }
 }
 
 contract DeployTriggerMainnetTest is DeployTriggerSharedTest {
@@ -547,6 +608,10 @@ contract DeployTriggerMainnetTest is DeployTriggerSharedTest {
     testFork_RunProgrammaticCheckSettlesRequests(TOO_EARLY_ANSWER, false, true, "8");
     testFork_RunProgrammaticCheckSettlesRequests(TOO_EARLY_ANSWER, true, true, "9");
   }
+
+  function testFork1_CannotDeploySameTriggerTwice() public {
+    testFork_CannotDeploySameTriggerTwice();
+  }
 }
 
 contract DeployTriggerOptimismTest is DeployTriggerSharedTest {
@@ -588,5 +653,9 @@ contract DeployTriggerOptimismTest is DeployTriggerSharedTest {
     testFork_RunProgrammaticCheckSettlesRequests(INDETERMINATE_ANSWER, true, true, "7");
     testFork_RunProgrammaticCheckSettlesRequests(TOO_EARLY_ANSWER, false, true, "8");
     testFork_RunProgrammaticCheckSettlesRequests(TOO_EARLY_ANSWER, true, true, "9");
+  }
+
+  function testFork10_CannotDeploySameTriggerTwice() public {
+    testFork_CannotDeploySameTriggerTwice();
   }
 }
