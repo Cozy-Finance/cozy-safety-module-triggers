@@ -30,7 +30,7 @@ contract OwnableTriggerTest is TriggerTestSetup {
     assertEq(trigger.state(), TriggerState.ACTIVE);
 
     vm.prank(owner);
-    trigger.runProgrammaticCheck();
+    trigger.trigger();
     assertEq(trigger.state(), TriggerState.TRIGGERED);
   }
 
@@ -39,7 +39,7 @@ contract OwnableTriggerTest is TriggerTestSetup {
     assertEq(trigger.state(), TriggerState.ACTIVE);
 
     vm.expectRevert(Ownable.Unauthorized.selector);
-    trigger.runProgrammaticCheck();
+    trigger.trigger();
     assertEq(trigger.state(), TriggerState.ACTIVE);
   }
 
