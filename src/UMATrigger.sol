@@ -247,9 +247,10 @@ contract UMATrigger is BaseTrigger {
       _updateTriggerState(TriggerState.TRIGGERED);
     } else {
       // If the answer was not affirmative, i.e. "Yes, the protocol was hacked",
-      // the trigger should remain in the ACTIVE state. And we need to resubmit
+      // the trigger should return to the ACTIVE state. And we need to resubmit
       // our query so that we are informed if the event we care about happens in
       // the future.
+      _updateTriggerState(TriggerState.ACTIVE);
       _submitRequestToOracle();
       emit QueryResubmitted();
     }
