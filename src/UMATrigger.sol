@@ -8,47 +8,47 @@ import {TriggerState} from "./structs/StateEnums.sol";
 import {IERC20 as CozyIERC20} from "./interfaces/IERC20.sol";
 
 /**
- * @notice This is an automated trigger contract which will move markets into a
+ * @notice This is an automated trigger contract which will move into a
  * TRIGGERED state in the event that the UMA Optimistic Oracle answers "YES" to
  * a provided query, e.g. "Was protocol ABCD hacked on or after block 42". More
  * information about UMA oracles and the lifecycle of queries can be found here:
  * https://docs.umaproject.org/.
  * @dev The high-level lifecycle of a UMA request is as follows:
- *   - someone asks a question of the oracle and provides a reward for someone
- *     to answer it
- *   - users of the UMA oracle system view the question (usually here:
- *     https://oracle.umaproject.org/)
- *   - someone proposes an answer to the question in hopes of claiming the
- *     reward`
- *   - users of UMA see the proposed answer and have a chance to dispute it
- *   - there is a finite period of time within which to dispute the answer
- *   - if the answer is not disputed during this period, the oracle can finalize
- *     the answer and the proposer gets the reward
- *   - if the answer is disputed, the question is sent to the DVM (Data
- *     Verification Mechanism) in which UMA token holders vote on who is right
+ * - someone asks a question of the oracle and provides a reward for someone
+ * to answer it
+ * - users of the UMA prediction market view the question (usually here:
+ * https://oracle.umaproject.org/)
+ * - someone proposes an answer to the question in hopes of claiming the
+ * reward`
+ * - users of UMA see the proposed answer and have a chance to dispute it
+ * - there is a finite period of time within which to dispute the answer
+ * - if the answer is not disputed during this period, the oracle finalizes
+ * the answer and the proposer gets the reward
+ * - if the answer is disputed, the question is sent to the DVM (Data
+ * Verification Mechanism) in which UMA token holders vote on who is right
  * There are four essential players in the above process:
- *   1. Requester: the account that is asking the oracle a question.
- *   2. Proposer: the account that submits an answer to the question.
- *   3. Disputer: the account (if any) that disagrees with the proposed answer.
- *   4. The DVM: a DAO that is the final arbiter of disputed proposals.
+ * 1. Requester: the account that is asking the oracle a question.
+ * 2. Proposer: the account that submits an answer to the question.
+ * 3. Disputer: the account (if any) that disagrees with the proposed answer.
+ * 4. The DVM: a DAO that is the final arbiter of disputed proposals.
  * This trigger plays the first role in this lifecycle. It submits a request for
  * an answer to a yes-or-no question (the query) to the Optimistic Oracle.
  * Questions need to be phrased in such a way that if a "Yes" answer is given
- * to them, then this contract will go into a TRIGGERED state and p-token
- * holders will be able to claim the protection that they purchased. For
- * example, if you wanted to create a market selling protection for Compound
- * yield, you might deploy a UMATrigger with a query like "Was Compound hacked
+ * to them, then this contract will go into a TRIGGERED state. For
+ * example, if you wanted to create a safety module for protecting Compound
+ * users, you might deploy a UMATrigger with a query like "Was Compound hacked
  * after block X?" If the oracle responds with a "Yes" answer, this contract
- * would move the associated market into the TRIGGERED state and people who had
- * purchased protection from that market would get paid out.
- *   But what if Compound hasn't been hacked? Can't someone just respond "No" to
+ * would move into the TRIGGERED state and safety modules  with this trigger
+ * registered could transition to the TRIGGERED state and potentially payout
+ * Compound users.
+ * But what if Compound hasn't been hacked? Can't someone just respond "No" to
  * the trigger's query? Wouldn't that be the right answer and wouldn't it mean
  * the end of the query lifecycle? Yes. For this exact reason, we have enabled
  * callbacks (see the `priceProposed` function) which will revert in the event
  * that someone attempts to propose a negative answer to the question. We want
  * the queries to remain open indefinitely until there is a positive answer,
  * i.e. "Yes, there was a hack". **This should be communicated in the query text.**
- *   In the event that a YES answer to a query is disputed and the DVM sides
+ * In the event that a YES answer to a query is disputed and the DVM sides
  * with the disputer (i.e. a NO answer), we immediately re-submit the query to
  * the DVM through another callback (see `priceSettled`). In this way, our query
  * will always be open with the oracle. If/when the event that we are concerned
@@ -221,8 +221,8 @@ contract UMATrigger is BaseTrigger {
     // that a hack/exploit has *not* happened yet, or it cannot be determined, etc.
     if (_umaRequest.proposedPrice != AFFIRMATIVE_ANSWER) revert InvalidProposal();
 
-    // Freeze the market and set so that the trigger cannot be added to a new safety module, since
-    // there's now a real possibility that we are going to trigger.
+    // Freeze the trigger so it cannot be added to a safety module, since there's now a real
+    // possibility that we are going to trigger.
     _updateTriggerState(TriggerState.FROZEN);
   }
 
@@ -293,7 +293,7 @@ contract UMATrigger is BaseTrigger {
       oracle.getRequest(address(this), queryIdentifier, requestTimestamp, bytes(query));
     if (!_umaRequest.settled) {
       // Give the reward balance to the caller to make up for gas costs and
-      // incentivize keeping markets in line with trigger state.
+      // incentivize keeping safety modules in line with trigger state.
       refundRecipient = msg.sender;
 
       // `settle` will cause the oracle to call the trigger's `priceSettled` function.

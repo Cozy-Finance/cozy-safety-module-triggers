@@ -42,7 +42,7 @@ abstract contract BaseTrigger is ITrigger {
     // | TRIGGERED | false       | false       | false    | -         | <-- TRIGGERED is a terminal state
 
     if (_oldState == TriggerState.TRIGGERED) return false;
-    // If oldState == newState, return true since the Set will convert that into a no-op.
+    // If oldState == newState, return true since the safety module will convert that into a no-op.
     if (_oldState == _newState) return true;
     if (_oldState == TriggerState.ACTIVE && _newState == TriggerState.FROZEN) return true;
     if (_oldState == TriggerState.FROZEN && _newState == TriggerState.ACTIVE) return true;

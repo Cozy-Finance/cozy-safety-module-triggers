@@ -10,7 +10,7 @@ import {OptimisticOracleV2Interface} from "./interfaces/OptimisticOracleV2Interf
 
 /**
  * @notice This is a utility contract to make it easy to deploy UMATriggers for
- * the Cozy protocol.
+ * the Cozy Safety Module protocol.
  * @dev Be sure to approve the trigger to spend the rewardAmount before calling
  * `deployTrigger`, otherwise the latter will revert. Funds need to be available
  * to the created trigger within its constructor so that it can submit its query
@@ -28,7 +28,17 @@ contract UMATriggerFactory {
   /// @dev Emitted when the factory deploys a trigger.
   /// @param trigger The address at which the trigger was deployed.
   /// @param triggerConfigId See the function of the same name in this contract.
-  /// @param name The name that should be used for markets that use the trigger.
+  /// @param oracle The address of the UMA Optimistic Oracle.
+  /// @param query The query that the trigger submitted to the UMA Optimistic Oracle.
+  /// @param rewardToken The token used to pay the reward to users that successfully propose answers to the query.
+  /// @param rewardAmount The amount of rewardToken that will be paid as a reward to anyone who successfully proposes an
+  /// answer to the query.
+  /// @param refundRecipient Default address that will recieve any leftover rewards at UMA query settlement time.
+  /// @param bondAmount The amount of `rewardToken` that must be staked by a user wanting to propose or dispute an
+  /// answer to the query.
+  /// @param proposalDisputeWindow The window of time in seconds within which a proposed answer may be disputed.
+  /// @param name The human-readble name of the trigger.
+  /// @param category The category of the trigger.
   /// @param description A human-readable description of the trigger.
   /// @param logoURI The URI of a logo image to represent the trigger.
   /// For other attributes, see the docs for the params of `deployTrigger` in
@@ -49,6 +59,7 @@ contract UMATriggerFactory {
     string logoURI
   );
 
+  /// @dev Thrown when the trigger address computed by the factory does not match deployed address.
   error TriggerAddressMismatch();
 
   constructor(OptimisticOracleV2Interface _oracle) {
@@ -159,8 +170,8 @@ contract UMATriggerFactory {
   }
 
   /// @notice Call this function to find triggers with the specified
-  /// configurations that can be used for new markets in Sets. See
-  /// `deployTrigger` for more information on parameters and their meaning.
+  /// configurations that can be used for safety modules. See `deployTrigger` for more information on parameters
+  /// and their meaning.
   function findAvailableTrigger(
     string memory _query,
     CozyIERC20 _rewardToken,
@@ -177,8 +188,8 @@ contract UMATriggerFactory {
   }
 
   /// @notice Call this function to determine the identifier of the supplied
-  /// trigger configuration. This identifier is used both to track the number of
-  /// triggers deployed with this configuration (see `triggerCount`) and is
+  /// trigger configuration. This identifier is used both to track if there is an
+  /// UMATrigger deployed with this configuration (see `exists`) and is
   /// emitted as a part of the TriggerDeployed event when triggers are deployed.
   /// @dev This function takes the rewardAmount as an input despite it not being
   /// an argument of the UMATrigger constructor nor it being held in storage by
@@ -186,7 +197,7 @@ contract UMATriggerFactory {
   /// deployers could reasonably differ on. Deployer A might deploy a trigger
   /// that is identical to what Deployer B wants in every way except the amount
   /// of rewardToken that is being offered, and it would still be reasonable for
-  /// Deployer B to not want to re-use A's trigger for his own markets.
+  /// Deployer B to not want to re-use A's trigger for their own Safety Module.
   function triggerConfigId(
     string memory _query,
     CozyIERC20 _rewardToken,

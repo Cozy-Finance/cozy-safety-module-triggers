@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import {TriggerState} from "../structs/StateEnums.sol";
 
 /**
- * @notice This is an automated trigger contract which will move markets into a
+ * @notice This is an automated trigger contract which will move into a
  * TRIGGERED state in the event that the UMA Optimistic Oracle answers "YES" to
  * a provided query, e.g. "Was protocol ABCD hacked on or after block 42". More
  * information about UMA oracles and the lifecycle of queries can be found here:
@@ -30,13 +30,13 @@ import {TriggerState} from "../structs/StateEnums.sol";
  * This trigger plays the first role in this lifecycle. It submits a request for
  * an answer to a yes-or-no question (the query) to the Optimistic Oracle.
  * Questions need to be phrased in such a way that if a "Yes" answer is given
- * to them, then this contract will go into a TRIGGERED state and p-token
- * holders will be able to claim the protection that they purchased. For
- * example, if you wanted to create a market selling protection for Compound
- * yeild, you might deploy a UMATrigger with a query like "Was Compound hacked
+ * to them, then this contract will go into a TRIGGERED state. For
+ * example, if you wanted to create a safety module for protecting Compound
+ * users, you might deploy a UMATrigger with a query like "Was Compound hacked
  * after block X?" If the oracle responds with a "Yes" answer, this contract
- * would move the associated market into the TRIGGERED state and people who had
- * purchased protection from that market would get paid out.
+ * would move into the TRIGGERED state and safety modules  with this trigger
+ * registered could transition to the TRIGGERED state and potentially payout
+ * Compound users.
  * But what if Compound hasn't been hacked? Can't someone just respond "No" to
  * the trigger's query? Wouldn't that be the right answer and wouldn't it mean
  * the end of the query lifecycle? Yes. For this exact reason, we have enabled
