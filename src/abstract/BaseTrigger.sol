@@ -15,9 +15,6 @@ abstract contract BaseTrigger is ITrigger {
   /// @dev Thrown when a state update results in an invalid state transition.
   error InvalidStateTransition();
 
-  /// @dev Thrown when the caller is not authorized to perform the action.
-  error Unauthorized();
-
   /// @dev Child contracts should use this function to handle Trigger state transitions.
   function _updateTriggerState(TriggerState _newState) internal returns (TriggerState) {
     if (!_isValidTriggerStateTransition(state, _newState)) revert InvalidStateTransition();

@@ -115,6 +115,9 @@ contract UMATrigger is BaseTrigger {
   /// state).
   event QueryResubmitted();
 
+  /// @dev Thrown when the caller is not authorized to perform the action.
+  error Unauthorized();
+
   /// @dev UMA expects answers to be denominated as wads. So, e.g., a p3 answer
   /// of 0.5 would be represented as 0.5e18.
   int256 internal constant AFFIRMATIVE_ANSWER = 1e18;
