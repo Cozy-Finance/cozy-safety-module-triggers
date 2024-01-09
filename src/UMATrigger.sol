@@ -87,7 +87,10 @@ contract UMATrigger is BaseTrigger {
   /// be disputed. See UMA's "customLiveness" setting for more information. It's
   /// recommended that the dispute window be fairly long (12-24 hours), given
   /// the difficulty of assessing expected queries (e.g. "Was protocol ABCD
-  /// hacked") and the amount of funds potentially at stake.
+  /// hacked") and the amount of funds potentially at stake. Additionally,
+  /// proposalDisputeWindow < min(unstakeDelay, withdrawalDelay) is recommended
+  /// to avoid safety modules stakers / depositors front-running safety modules
+  /// becoming triggered.
   uint256 public immutable proposalDisputeWindow;
 
   /// @notice The most recent timestamp that the query was submitted to the UMA oracle.

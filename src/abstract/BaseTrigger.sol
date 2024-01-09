@@ -36,9 +36,7 @@ abstract contract BaseTrigger is ITrigger {
     // | --------- | ----------- | ----------- | -------- | --------- |
     // | ACTIVE    | -           | true        | false    | true      |
     // | FROZEN    | true        | -           | false    | true      |
-    // | PAUSED    | false       | false       | -        | false     | <-- PAUSED is a safety module-level state,
-    // triggers
-    // cannot be paused
+    // | PAUSED    | false       | false       | -        | false     | <-- PAUSED is a safety module-level state
     // | TRIGGERED | false       | false       | false    | -         | <-- TRIGGERED is a terminal state
 
     if (_oldState == TriggerState.TRIGGERED) return false;

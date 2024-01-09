@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 struct TriggerMetadata {
-  // The name that should be used for markets that use the trigger.
+  // The name that should be used for safety modules that use the trigger.
   string name;
   // Category of the trigger.
   string category;
