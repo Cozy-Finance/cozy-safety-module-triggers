@@ -5,7 +5,7 @@ import {BaseTrigger} from "./abstract/BaseTrigger.sol";
 import {OptimisticOracleV2Interface} from "./interfaces/OptimisticOracleV2Interface.sol";
 import {SafeTransferLib} from "./lib/SafeTransferLib.sol";
 import {TriggerState} from "./structs/StateEnums.sol";
-import {IERC20 as CozyIERC20} from "./interfaces/IERC20.sol";
+import {IERC20} from "./interfaces/IERC20.sol";
 
 /**
  * @notice This is an automated trigger contract which will move into a
@@ -55,7 +55,7 @@ import {IERC20 as CozyIERC20} from "./interfaces/IERC20.sol";
  * with happens the trigger will immediately be notified.
  */
 contract UMATrigger is BaseTrigger {
-  using SafeTransferLib for CozyIERC20;
+  using SafeTransferLib for IERC20;
 
   /// @notice The type of query that will be submitted to the oracle.
   bytes32 public constant queryIdentifier = bytes32("YES_OR_NO_QUERY");
@@ -74,7 +74,7 @@ contract UMATrigger is BaseTrigger {
   string public query;
 
   /// @notice The token used to pay the reward to users that propose answers to the query.
-  CozyIERC20 public immutable rewardToken;
+  IERC20 public immutable rewardToken;
 
   /// @notice The amount of `rewardToken` that must be staked by a user wanting
   /// to propose or dispute an answer to the query. See UMA's price dispute
@@ -138,7 +138,7 @@ contract UMATrigger is BaseTrigger {
   constructor(
     OptimisticOracleV2Interface _oracle,
     string memory _query,
-    CozyIERC20 _rewardToken,
+    IERC20 _rewardToken,
     address _refundRecipient,
     uint256 _bondAmount,
     uint256 _proposalDisputeWindow

@@ -6,7 +6,7 @@ pragma solidity 0.8.22;
 // same implementation. For example, if a file in the cozy-v2-interfaces submodule that is imported in this project
 // imports an IERC20 interface with "import src/interfaces/IERC20.sol;", but in this project we import the same
 // interface with "import cozy-v2-interfaces/interfaces/IERC20.sol;", a DeclarationError will be thrown.
-import { IERC20 as CozyIERC20 } from "../interfaces/IERC20.sol";
+import { IERC20 } from "../interfaces/IERC20.sol";
 
 /// @notice Safe ETH and ERC20 transfer library that gracefully handles missing return values.
 /// @author Solmate (https://github.com/transmissions11/solmate/blob/d155ee8d58f96426f57c015b34dee8a410c1eacc/src/utils/SafeTransferLib.sol)
@@ -35,7 +35,7 @@ library SafeTransferLib {
   // ----------------------------------
 
   function safeTransferFrom(
-    CozyIERC20 token,
+    IERC20 token,
     address from,
     address to,
     uint256 amount
@@ -68,7 +68,7 @@ library SafeTransferLib {
   }
 
   function safeTransfer(
-    CozyIERC20 token,
+    IERC20 token,
     address to,
     uint256 amount
   ) internal {
@@ -99,7 +99,7 @@ library SafeTransferLib {
   }
 
   function safeApprove(
-    CozyIERC20 token,
+    IERC20 token,
     address to,
     uint256 amount
   ) internal {

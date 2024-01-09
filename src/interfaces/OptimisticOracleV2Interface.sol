@@ -6,7 +6,7 @@ pragma solidity ^0.8.0;
 // same implementation. For example, if a file in the cozy-v2-interfaces submodule that is imported in this project
 // imports an IERC20 interface with "import src/interfaces/IERC20.sol;", but in this project we import the same
 // interface with "import cozy-v2-interfaces/interfaces/IERC20.sol;", a DeclarationError will be thrown.
-import { IERC20 as CozyIERC20 } from "./IERC20.sol";
+import { IERC20 } from "./IERC20.sol";
 import "uma-protocol/packages/core/contracts/data-verification-mechanism/interfaces/FinderInterface.sol";
 
 /**
@@ -80,7 +80,7 @@ abstract contract OptimisticOracleV2Interface {
     struct Request {
         address proposer; // Address of the proposer.
         address disputer; // Address of the disputer.
-        CozyIERC20 currency; // ERC20 token used to pay rewards and fees.
+        IERC20 currency; // ERC20 token used to pay rewards and fees.
         bool settled; // True if the request is settled.
         RequestSettings requestSettings; // Custom settings associated with a request.
         int256 proposedPrice; // Price that the proposer submitted.
@@ -120,7 +120,7 @@ abstract contract OptimisticOracleV2Interface {
         bytes32 identifier,
         uint256 timestamp,
         bytes memory ancillaryData,
-        CozyIERC20 currency,
+        IERC20 currency,
         uint256 reward
     ) external virtual returns (uint256 totalBond);
 

@@ -4,7 +4,7 @@ pragma solidity 0.8.22;
 import {SafeTransferLib} from "./lib/SafeTransferLib.sol";
 import {UMATrigger} from "./UMATrigger.sol";
 import {TriggerMetadata} from "./structs/Triggers.sol";
-import {IERC20 as CozyIERC20} from "./interfaces/IERC20.sol";
+import {IERC20} from "./interfaces/IERC20.sol";
 import {IUMATriggerFactory} from "./interfaces/IUMATriggerFactory.sol";
 import {OptimisticOracleV2Interface} from "./interfaces/OptimisticOracleV2Interface.sol";
 
@@ -17,7 +17,7 @@ import {OptimisticOracleV2Interface} from "./interfaces/OptimisticOracleV2Interf
  * to the UMA oracle.
  */
 contract UMATriggerFactory {
-  using SafeTransferLib for CozyIERC20;
+  using SafeTransferLib for IERC20;
 
   /// @notice The UMA Optimistic Oracle.
   OptimisticOracleV2Interface public immutable oracle;
@@ -97,7 +97,7 @@ contract UMATriggerFactory {
   /// @param _metadata See TriggerMetadata for more info.
   function deployTrigger(
     string memory _query,
-    CozyIERC20 _rewardToken,
+    IERC20 _rewardToken,
     uint256 _rewardAmount,
     address _refundRecipient,
     uint256 _bondAmount,
@@ -149,7 +149,7 @@ contract UMATriggerFactory {
   /// more information on parameters and their meaning.
   function computeTriggerAddress(
     string memory _query,
-    CozyIERC20 _rewardToken,
+    IERC20 _rewardToken,
     uint256 _rewardAmount,
     address _refundRecipient,
     uint256 _bondAmount,
@@ -174,7 +174,7 @@ contract UMATriggerFactory {
   /// and their meaning.
   function findAvailableTrigger(
     string memory _query,
-    CozyIERC20 _rewardToken,
+    IERC20 _rewardToken,
     uint256 _rewardAmount,
     address _refundRecipient,
     uint256 _bondAmount,
@@ -200,7 +200,7 @@ contract UMATriggerFactory {
   /// Deployer B to not want to re-use A's trigger for their own Safety Module.
   function triggerConfigId(
     string memory _query,
-    CozyIERC20 _rewardToken,
+    IERC20 _rewardToken,
     uint256 _rewardAmount,
     address _refundRecipient,
     uint256 _bondAmount,
