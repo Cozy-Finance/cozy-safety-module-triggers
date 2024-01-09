@@ -36,6 +36,10 @@ contract TriggerTestSetup is Test {
     assertEq(_trigger.state(), _val);
   }
 
+  function _expectEmit() internal {
+    vm.expectEmit(true, true, true, true);
+  }
+
   // ---------------------------------------
   // -------- Additional Assertions --------
   // ---------------------------------------
@@ -55,5 +59,23 @@ contract TriggerTestSetup is Test {
       emit log_named_address("    Both values", address(a));
       fail();
     }
+  }
+
+  // -----------------------------------
+  // -------- Randomizer Functions --------
+  // -----------------------------------
+
+  function _randomBytes32() internal view returns (bytes32) {
+    return keccak256(
+      abi.encode(block.timestamp, blockhash(0), gasleft(), tx.origin, keccak256(msg.data), address(this).codehash)
+    );
+  }
+
+  function _randomAddress() internal view returns (address payable) {
+    return payable(address(uint160(_randomUint256())));
+  }
+
+  function _randomUint256() internal view returns (uint256) {
+    return uint256(_randomBytes32());
   }
 }

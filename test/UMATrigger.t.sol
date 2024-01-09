@@ -194,12 +194,12 @@ contract DeployTriggerSharedTest is TriggerTestSetup {
     _vars.queryTimestamp = _vars.trigger.requestTimestamp();
 
     // A random user cannot just call the priceProposed callback and freeze the market.
-    vm.expectRevert(BaseTrigger.Unauthorized.selector);
+    vm.expectRevert(UMATrigger.Unauthorized.selector);
     _vars.trigger.priceProposed(queryIdentifier, _vars.queryTimestamp, bytes(_vars.query));
     assertEq(_vars.trigger.state(), TriggerState.ACTIVE);
 
     // Nor can the user call priceSettled.
-    vm.expectRevert(BaseTrigger.Unauthorized.selector);
+    vm.expectRevert(UMATrigger.Unauthorized.selector);
     _vars.trigger.priceSettled(queryIdentifier, _vars.queryTimestamp, bytes(_vars.query), AFFIRMATIVE_ANSWER);
     assertEq(_vars.trigger.state(), TriggerState.ACTIVE);
 
@@ -468,7 +468,7 @@ contract DeployTriggerSharedTest is TriggerTestSetup {
     uint256 _queryTimestamp = block.timestamp;
 
     // A random user cannot just call the priceProposed callback and freeze the market.
-    vm.expectRevert(BaseTrigger.Unauthorized.selector);
+    vm.expectRevert(UMATrigger.Unauthorized.selector);
     _trigger.priceProposed(queryIdentifier, _queryTimestamp, bytes("Has USDT been hacked?"));
     assertEq(_trigger.state(), TriggerState.ACTIVE);
 
