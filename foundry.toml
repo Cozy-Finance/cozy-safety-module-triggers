@@ -8,8 +8,6 @@ optimizer = true
 optimizer-runs = 10_000_000
 bytecode_hash = "ipfs"
 remappings = [
-  "test/=test/", # Allows imports using e.g. `test/` to refer to root `test` directory.
-  "script/=script/",
   "@openzeppelin/=lib/openzeppelin-contracts" # Needed for UMA protocol imports.
 ]
 
