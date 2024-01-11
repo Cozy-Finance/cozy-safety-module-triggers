@@ -4,6 +4,7 @@ pragma solidity 0.8.22;
 import {OwnableTrigger} from "../src/OwnableTrigger.sol";
 import {OwnableTriggerFactory} from "../src/OwnableTriggerFactory.sol";
 import {Ownable} from "../src/lib/Ownable.sol";
+import {TriggerMetadata} from "../src/structs/Triggers.sol";
 import {TriggerState} from "../src/structs/StateEnums.sol";
 import {TriggerTestSetup} from "./utils/TriggerTestSetup.sol";
 
@@ -12,10 +13,33 @@ contract OwnableTriggerTest is TriggerTestSetup {
 
   address owner = address(0xBEEF);
 
+  /// @dev Emitted when the factory deploys a trigger.
+  /// @param trigger The address at which the trigger was deployed.
+  /// @param owner The owner of the trigger.
+  /// @param name The human-readble name of the trigger.
+  /// @param category The category of the trigger.
+  /// @param description A human-readable description of the trigger.
+  /// @param logoURI The URI of a logo image to represent the trigger.
+  /// For other attributes, see the docs for the params of `deployTrigger` in
+  /// this contract.
+  event TriggerDeployed(
+    address trigger, address indexed owner, string name, string category, string description, string logoURI
+  );
+
   function testFuzz_deployOwnableTriggerWithFactory(address _owner, bytes32 _salt) public {
     vm.assume(_owner != address(0));
+    TriggerMetadata memory _metadata = TriggerMetadata(
+      "Terra hack trigger",
+      "Protocol",
+      "A trigger that will toggle if Terra is hacked",
+      "https://via.placeholder.com/150"
+    );
     address _computedAddress = factory.computeTriggerAddress(_owner, _salt);
-    OwnableTrigger trigger = factory.deployTrigger(_owner, _salt);
+    _expectEmit();
+    emit TriggerDeployed(
+      _computedAddress, _owner, _metadata.name, _metadata.category, _metadata.description, _metadata.logoURI
+    );
+    OwnableTrigger trigger = factory.deployTrigger(_owner, _metadata, _salt);
     assertEq(trigger.owner(), _owner);
     assertEq(_computedAddress, address(trigger));
   }
