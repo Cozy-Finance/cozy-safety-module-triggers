@@ -4,6 +4,7 @@ pragma solidity 0.8.22;
 import "uma-protocol/packages/core/contracts/data-verification-mechanism/interfaces/FinderInterface.sol";
 import {console2} from "forge-std/console2.sol";
 import {stdJson} from "forge-std/Script.sol";
+import {OwnableTriggerFactory} from "../src/OwnableTriggerFactory.sol";
 import {UMATriggerFactory} from "../src/UMATriggerFactory.sol";
 import {OptimisticOracleV2Interface} from "../src/interfaces/OptimisticOracleV2Interface.sol";
 import {ScriptUtils} from "./ScriptUtils.sol";
@@ -68,6 +69,13 @@ contract DeployTriggerFactories is ScriptUtils {
     vm.broadcast();
     address factory = address(new UMATriggerFactory(_umaOracle));
     console2.log("UMATriggerFactory deployed", factory);
+
+    console2.log("====================");
+
+    console2.log("Deploying OwnableTriggerFactory...");
+    vm.broadcast();
+    factory = address(new OwnableTriggerFactory());
+    console2.log("OwnableTriggerFactory deployed", factory);
 
     console2.log("====================");
   }
