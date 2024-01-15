@@ -4,6 +4,7 @@ pragma solidity 0.8.22;
 import "uma-protocol/packages/core/contracts/data-verification-mechanism/interfaces/FinderInterface.sol";
 import {console2} from "forge-std/console2.sol";
 import {stdJson} from "forge-std/Script.sol";
+import {ChainlinkTriggerFactory} from "../src/ChainlinkTriggerFactory.sol";
 import {OwnableTriggerFactory} from "../src/OwnableTriggerFactory.sol";
 import {UMATriggerFactory} from "../src/UMATriggerFactory.sol";
 import {OptimisticOracleV2Interface} from "../src/interfaces/OptimisticOracleV2Interface.sol";
@@ -57,6 +58,8 @@ contract DeployTriggerFactories is ScriptUtils {
   // ---------------------------
 
   function run(string memory _fileName) public {
+    // -------- Read Inputs --------
+
     string memory _json = readInput(_fileName);
 
     umaOracleFinder = FinderInterface(_json.readAddress(".umaOracleFinder"));
@@ -64,11 +67,12 @@ contract DeployTriggerFactories is ScriptUtils {
     OptimisticOracleV2Interface _umaOracle =
       OptimisticOracleV2Interface(umaOracleFinder.getImplementationAddress(bytes32("OptimisticOracleV2")));
 
-    console2.log("Deploying UMATriggerFactory...");
-    console2.log("    umaOracle", address(_umaOracle));
+    // -------- Deploy Factories --------
+
+    console2.log("Deploying ChainlinkTriggerFactory...");
     vm.broadcast();
-    address factory = address(new UMATriggerFactory(_umaOracle));
-    console2.log("UMATriggerFactory deployed", factory);
+    address factory = address(new ChainlinkTriggerFactory());
+    console2.log("ChainlinkTriggerFactory deployed", factory);
 
     console2.log("====================");
 
@@ -76,6 +80,14 @@ contract DeployTriggerFactories is ScriptUtils {
     vm.broadcast();
     factory = address(new OwnableTriggerFactory());
     console2.log("OwnableTriggerFactory deployed", factory);
+
+    console2.log("====================");
+
+    console2.log("Deploying UMATriggerFactory...");
+    console2.log("    umaOracle", address(_umaOracle));
+    vm.broadcast();
+    factory = address(new UMATriggerFactory(_umaOracle));
+    console2.log("UMATriggerFactory deployed", factory);
 
     console2.log("====================");
   }

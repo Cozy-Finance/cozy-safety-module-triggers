@@ -2,6 +2,7 @@
 pragma solidity 0.8.22;
 
 import {Test, stdStorage, StdStorage} from "forge-std/Test.sol";
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {BaseTrigger} from "../../src/abstract/BaseTrigger.sol";
 import {IERC20} from "../../src/interfaces/IERC20.sol";
 import {ITrigger} from "../../src/interfaces/ITrigger.sol";
@@ -44,6 +45,10 @@ contract TriggerTestSetup is Test {
   // -------- Additional Assertions --------
   // ---------------------------------------
 
+  function assertEq(AggregatorV3Interface a, AggregatorV3Interface b) internal {
+    assertEq(address(a), address(b));
+  }
+
   function assertEq(TriggerState a, TriggerState b) internal {
     if (a != b) {
       emit log("Error: a == b not satisfied [TriggerState]");
@@ -56,6 +61,14 @@ contract TriggerTestSetup is Test {
   function assertNotEq(ITrigger a, ITrigger b) internal {
     if (a == b) {
       emit log("Error: a != b not satisfied [ITrigger]");
+      emit log_named_address("    Both values", address(a));
+      fail();
+    }
+  }
+
+  function assertNotEq(AggregatorV3Interface a, AggregatorV3Interface b) internal {
+    if (a == b) {
+      emit log("Error: a != b not satisfied [AggregatorV3Interface]");
       emit log_named_address("    Both values", address(a));
       fail();
     }

@@ -4,3 +4,9 @@
 [submodule "lib/uma-protocol"]
 	path = lib/uma-protocol
 	url = https://github.com/UMAprotocol/protocol
+[submodule "lib/chainlink"]
+	path = lib/chainlink
+	url = https://github.com/lib/chainlink
+[submodule "lib/solmate"]
+	path = lib/solmate
+	url = https://github.com/transmissions11/solmate
