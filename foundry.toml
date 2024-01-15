@@ -4,6 +4,7 @@ verbosity = 3
 fs_permissions = [{ access = "read", path = "./script/input"}]
 # Solidity config.
 solc-version = "0.8.22"
+evm_version = "paris" # Needed to deploy on chains that don't support PUSH0 (e.g. Optimism, Arbitrum)
 optimizer = true
 optimizer-runs = 10_000_000
 bytecode_hash = "ipfs"
