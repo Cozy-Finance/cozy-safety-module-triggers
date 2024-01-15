@@ -540,6 +540,70 @@ contract FindAvailableTriggerTest is ChainlinkTriggerFactoryTestSetup {
     // The first available trigger should be returned.
     assertEq(expectedTrigger_, address(initTrigger_));
   }
+
+  function testFuzz_FindAvailableTriggerWhenMultipleExistButAreTriggered(
+    uint256 priceTolerance_,
+    uint256 truthFrequencyTolerance_,
+    uint256 trackingFrequencyTolerance_,
+    uint8 triggersToDeploy_
+  ) public {
+    priceTolerance_ = bound(priceTolerance_, 0, ZOC - 1);
+
+    IChainlinkTrigger trigger_;
+    for (uint256 i = 0; i < triggersToDeploy_; i++) {
+      trigger_ = factory.deployTrigger(
+        AggregatorV3Interface(stEthUsdOracleMainnet),
+        AggregatorV3Interface(ethUsdOracleMainnet),
+        priceTolerance_,
+        truthFrequencyTolerance_,
+        trackingFrequencyTolerance_,
+        TriggerMetadata(
+          "Chainlink Trigger",
+          "Peg",
+          "A trigger that compares prices on Chainlink against a threshold",
+          "https://via.placeholder.com/150"
+        )
+      );
+      // Mock the trigger's state to TRIGGERED.
+      vm.mockCall(
+        address(trigger_), abi.encodeWithSelector(IChainlinkTrigger.state.selector), abi.encode(TriggerState.TRIGGERED)
+      );
+    }
+
+    address expectedTrigger_ = factory.findAvailableTrigger(
+      AggregatorV3Interface(stEthUsdOracleMainnet),
+      AggregatorV3Interface(ethUsdOracleMainnet),
+      priceTolerance_,
+      truthFrequencyTolerance_,
+      trackingFrequencyTolerance_
+    );
+
+    // All of the matching triggers are TRIGGERED.
+    assertEq(expectedTrigger_, address(0));
+
+    // Deploy another trigger with the same config, but don't mock the state to triggered.
+    trigger_ = factory.deployTrigger(
+      AggregatorV3Interface(stEthUsdOracleMainnet),
+      AggregatorV3Interface(ethUsdOracleMainnet),
+      priceTolerance_,
+      truthFrequencyTolerance_,
+      trackingFrequencyTolerance_,
+      TriggerMetadata(
+        "Chainlink Trigger",
+        "Peg",
+        "A trigger that compares prices on Chainlink against a threshold",
+        "https://via.placeholder.com/150"
+      )
+    );
+    expectedTrigger_ = factory.findAvailableTrigger(
+      AggregatorV3Interface(stEthUsdOracleMainnet),
+      AggregatorV3Interface(ethUsdOracleMainnet),
+      priceTolerance_,
+      truthFrequencyTolerance_,
+      trackingFrequencyTolerance_
+    );
+    assertEq(expectedTrigger_, address(trigger_));
+  }
 }
 
 contract DeployPeggedTriggerTest is ChainlinkTriggerFactoryTestSetup {
