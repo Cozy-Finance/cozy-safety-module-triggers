@@ -6,4 +6,4 @@
 	url = https://github.com/UMAprotocol/protocol
 [submodule "lib/chainlink"]
 	path = lib/chainlink
-	url = https://github.com/smartcontractkit/chainlink
+	url = https://github.com/lib/chainlink
