@@ -22,7 +22,7 @@ interface IChainlinkTriggerFactory {
   /// `ChainlinkTrigger.truthFrequencyTolerance()` for more information.
   /// @param trackingFrequencyTolerance The frequencyTolerance that the deployed trigger will have for the tracking
   /// oracle. See `ChainlinkTrigger.trackingFrequencyTolerance()` for more information.
-  /// @param name The name that should be used for markets that use the trigger.
+  /// @param name The name of the trigger.
   /// @param category The category of the trigger.
   /// @param description A human-readable description of the trigger.
   /// @param logoURI The URI of a logo image to represent the trigger.
@@ -65,7 +65,7 @@ interface IChainlinkTriggerFactory {
 
   /// @notice Call this function to deploy a ChainlinkTrigger with a
   /// FixedPriceAggregator as its truthOracle. This is useful if you were
-  /// building a market in which you wanted to track whether or not a stablecoin
+  /// building a safety module in which you wanted to track whether or not a stablecoin
   /// asset had become depegged.
   /// @param _price The fixed price, or peg, with which to compare the trackingOracle price.
   /// @param _decimals The number of decimals of the fixed price. This should
@@ -107,7 +107,7 @@ interface IChainlinkTriggerFactory {
   ) external view returns (address _address);
 
   /// @notice Call this function to find triggers with the specified
-  /// configurations that can be used for new markets in Sets.
+  /// configurations that can be used for safety module configuration.
   /// @dev If this function returns the zero address, that means that an
   /// available trigger was not found with the supplied configuration. Use
   /// `deployTrigger` to deploy a new one.
