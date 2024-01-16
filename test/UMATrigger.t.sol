@@ -34,9 +34,9 @@ contract DeployTriggerSharedTest is TriggerTestSetup {
     uint256 bondAmount,
     uint256 proposalDisputeWindow,
     string name,
-    string category,
     string description,
-    string logoURI
+    string logoURI,
+    string extraData
   );
 
   event ProposalDisputed();
@@ -84,9 +84,9 @@ contract DeployTriggerSharedTest is TriggerTestSetup {
       _bondAmount,
       _proposalDisputeWindow,
       "Terra hack trigger",
-      "Protocol",
       "A trigger that will toggle if Terra is hacked",
-      "https://via.placeholder.com/150"
+      "https://via.placeholder.com/150",
+      "$category: Protocol"
     );
 
     UMATrigger _trigger = factory.deployTrigger(
@@ -98,9 +98,9 @@ contract DeployTriggerSharedTest is TriggerTestSetup {
       _proposalDisputeWindow,
       TriggerMetadata(
         "Terra hack trigger",
-        "Protocol",
         "A trigger that will toggle if Terra is hacked",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Protocol"
       )
     );
 
@@ -185,9 +185,9 @@ contract DeployTriggerSharedTest is TriggerTestSetup {
       _vars.proposalDisputeWindow,
       TriggerMetadata(
         "XYZ hack trigger",
-        "XYZ Category",
         "A trigger that will toggle if XYZ is hacked",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: XYZ Category"
       )
     );
 
@@ -353,9 +353,9 @@ contract DeployTriggerSharedTest is TriggerTestSetup {
       _proposalDisputeWindow,
       TriggerMetadata(
         "Terra hack trigger",
-        "Protocol",
         "A trigger that will toggle if Terra is hacked",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Protocol"
       )
     );
 
@@ -460,9 +460,9 @@ contract DeployTriggerSharedTest is TriggerTestSetup {
       _proposalDisputeWindow,
       TriggerMetadata(
         "USDT hack trigger",
-        "Stablecoin",
         "A trigger that will toggle if USDT is hacked",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Stablecoin"
       )
     );
     uint256 _queryTimestamp = block.timestamp;
@@ -528,9 +528,9 @@ contract DeployTriggerSharedTest is TriggerTestSetup {
       _vars.proposalDisputeWindow,
       TriggerMetadata(
         "XYZ hack trigger",
-        "XYZ Category",
         "A trigger that will toggle if XYZ is hacked",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: XYZ Category"
       )
     );
 
@@ -544,9 +544,9 @@ contract DeployTriggerSharedTest is TriggerTestSetup {
       _vars.proposalDisputeWindow,
       TriggerMetadata(
         "XYZ hack trigger",
-        "XYZ Category",
         "A trigger that will toggle if XYZ is hacked",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: XYZ Category"
       )
     );
 
@@ -560,9 +560,9 @@ contract DeployTriggerSharedTest is TriggerTestSetup {
       _vars.proposalDisputeWindow,
       TriggerMetadata(
         "XYZ hack trigger",
-        "XYZ Category",
         "A trigger that will toggle if XYZ is hacked",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: XYZ Category"
       )
     );
   }

@@ -23,11 +23,11 @@ interface IChainlinkTriggerFactory {
   /// @param trackingFrequencyTolerance The frequencyTolerance that the deployed trigger will have for the tracking
   /// oracle. See `ChainlinkTrigger.trackingFrequencyTolerance()` for more information.
   /// @param name The name of the trigger.
-  /// @param category The category of the trigger.
   /// @param description A human-readable description of the trigger.
   /// @param logoURI The URI of a logo image to represent the trigger.
   /// For other attributes, see the docs for the params of `deployTrigger` in
   /// this contract.
+  /// @param extraData Extra metadata for the trigger.
   event TriggerDeployed(
     address trigger,
     bytes32 indexed triggerConfigId,
@@ -37,9 +37,9 @@ interface IChainlinkTriggerFactory {
     uint256 truthFrequencyTolerance,
     uint256 trackingFrequencyTolerance,
     string name,
-    string category,
     string description,
-    string logoURI
+    string logoURI,
+    string extraData
   );
 
   /// @notice Maps the triggerConfigId to the number of triggers created with those configs.

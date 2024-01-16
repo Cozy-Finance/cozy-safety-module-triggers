@@ -77,9 +77,9 @@ contract ChainlinkTriggerFactory is IChainlinkTriggerFactory {
       _truthFrequencyTolerance,
       _trackingFrequencyTolerance,
       _metadata.name,
-      _metadata.category,
       _metadata.description,
-      _metadata.logoURI
+      _metadata.logoURI,
+      _metadata.extraData
     );
   }
 

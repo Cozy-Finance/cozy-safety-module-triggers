@@ -34,9 +34,9 @@ contract ChainlinkTriggerFactoryTestBaseSetup is TriggerTestSetup {
     uint256 truthFrequencyTolerance,
     uint256 trackingFrequencyTolerance,
     string name,
-    string category,
     string description,
-    string logoURI
+    string logoURI,
+    string extraData
   );
 
   function setUp() public virtual override {
@@ -89,9 +89,9 @@ contract DeployTriggerForkTest is ChainlinkTriggerFactoryTestBaseSetup {
       45, // trackingFrequencyTolerance
       TriggerMetadata(
         "Peg Protection Trigger",
-        "Peg",
         "A trigger that protects from something depegging",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
   }
@@ -128,9 +128,9 @@ contract DeployTriggerForkTest is ChainlinkTriggerFactoryTestBaseSetup {
         trackingFrequencyTolerance_,
         TriggerMetadata(
           "Chainlink Trigger",
-          "Category Name",
           "A trigger that compares prices on Chainlink against a threshold",
-          "https://via.placeholder.com/150"
+          "https://via.placeholder.com/150",
+          "Extra data"
         )
       );
       assertEq(trigger_.truthFrequencyTolerance(), truthFrequencyTolerance_);
@@ -144,9 +144,9 @@ contract DeployTriggerForkTest is ChainlinkTriggerFactoryTestBaseSetup {
         trackingFrequencyTolerance_,
         TriggerMetadata(
           "Peg Protection Trigger",
-          "Peg",
           "A trigger that protects from something depegging",
-          "https://via.placeholder.com/150"
+          "https://via.placeholder.com/150",
+          "$category: Peg"
         )
       );
       AggregatorV3Interface pegOracle_ = trigger_.truthOracle();
@@ -216,9 +216,9 @@ contract DeployTriggerTest is ChainlinkTriggerFactoryTestSetup {
       trackingFrequencyTolerance_,
       TriggerMetadata(
         "Chainlink Trigger",
-        "Threshold",
         "A trigger that compares prices on Chainlink against a threshold",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Threshold"
       )
     );
 
@@ -261,9 +261,9 @@ contract DeployTriggerTest is ChainlinkTriggerFactoryTestSetup {
       truthFrequencyTolerance_,
       trackingFrequencyTolerance_,
       "Chainlink Trigger",
-      "Peg",
       "A trigger that compares prices on Chainlink against a threshold",
-      "https://via.placeholder.com/150"
+      "https://via.placeholder.com/150",
+      "$category: Peg"
     );
 
     factory.deployTrigger(
@@ -274,9 +274,9 @@ contract DeployTriggerTest is ChainlinkTriggerFactoryTestSetup {
       trackingFrequencyTolerance_,
       TriggerMetadata(
         "Chainlink Trigger",
-        "Peg",
         "A trigger that compares prices on Chainlink against a threshold",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
   }
@@ -305,9 +305,9 @@ contract DeployTriggerTest is ChainlinkTriggerFactoryTestSetup {
       trackingFrequencyTolerance_,
       TriggerMetadata(
         "Chainlink Trigger",
-        "Peg",
         "A trigger that compares prices on Chainlink against a threshold",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
 
@@ -321,9 +321,9 @@ contract DeployTriggerTest is ChainlinkTriggerFactoryTestSetup {
       trackingFrequencyTolerance_,
       TriggerMetadata(
         "Chainlink Trigger",
-        "Peg",
         "A trigger that compares prices on Chainlink against a threshold",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
 
@@ -347,9 +347,9 @@ contract DeployTriggerTest is ChainlinkTriggerFactoryTestSetup {
       trackingFrequencyTolerance_,
       TriggerMetadata(
         "Chainlink Trigger",
-        "Peg",
         "A trigger that compares prices on Chainlink against a threshold",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
 
@@ -363,9 +363,9 @@ contract DeployTriggerTest is ChainlinkTriggerFactoryTestSetup {
       trackingFrequencyTolerance_,
       TriggerMetadata(
         "Chainlink Trigger",
-        "Peg",
         "A trigger that compares prices on Chainlink against a threshold",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
 
@@ -397,9 +397,9 @@ contract ComputeTriggerAddressTest is ChainlinkTriggerFactoryTestSetup {
       trackingFrequencyTolerance_,
       TriggerMetadata(
         "Chainlink Trigger",
-        "Peg",
         "A trigger that compares prices on Chainlink against a threshold",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
 
@@ -481,9 +481,9 @@ contract TriggerConfigIdTest is ChainlinkTriggerFactoryTestSetup {
       trackingFrequencyTolerance_,
       TriggerMetadata(
         "Chainlink Trigger",
-        "Peg",
         "A trigger that compares prices on Chainlink against a threshold",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
 
@@ -521,9 +521,9 @@ contract FindAvailableTriggerTest is ChainlinkTriggerFactoryTestSetup {
         trackingFrequencyTolerance_,
         TriggerMetadata(
           "Chainlink Trigger",
-          "Peg",
           "A trigger that compares prices on Chainlink against a threshold",
-          "https://via.placeholder.com/150"
+          "https://via.placeholder.com/150",
+          "$category: Peg"
         )
       );
       if (i == 0) initTrigger_ = trigger_;
@@ -559,9 +559,9 @@ contract FindAvailableTriggerTest is ChainlinkTriggerFactoryTestSetup {
         trackingFrequencyTolerance_,
         TriggerMetadata(
           "Chainlink Trigger",
-          "Peg",
           "A trigger that compares prices on Chainlink against a threshold",
-          "https://via.placeholder.com/150"
+          "https://via.placeholder.com/150",
+          "$category: Peg"
         )
       );
       // Mock the trigger's state to TRIGGERED.
@@ -590,9 +590,9 @@ contract FindAvailableTriggerTest is ChainlinkTriggerFactoryTestSetup {
       trackingFrequencyTolerance_,
       TriggerMetadata(
         "Chainlink Trigger",
-        "Peg",
         "A trigger that compares prices on Chainlink against a threshold",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
     expectedTrigger_ = factory.findAvailableTrigger(
@@ -616,9 +616,9 @@ contract DeployPeggedTriggerTest is ChainlinkTriggerFactoryTestSetup {
       60, // 60s frequency tolerance.
       TriggerMetadata(
         "Peg Protection Trigger",
-        "Peg",
         "A trigger that protects from something depegging",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
 
@@ -643,9 +643,9 @@ contract DeployPeggedTriggerTest is ChainlinkTriggerFactoryTestSetup {
       60, // 60s frequency tolerance.
       TriggerMetadata(
         "Peg Protection Trigger",
-        "Peg",
         "A trigger that protects from something depegging",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
 
@@ -657,9 +657,9 @@ contract DeployPeggedTriggerTest is ChainlinkTriggerFactoryTestSetup {
       360, // 360s frequency tolerance.
       TriggerMetadata(
         "Peg Protection Trigger",
-        "Peg",
         "A trigger that protects from something depegging",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
 
@@ -674,9 +674,9 @@ contract DeployPeggedTriggerTest is ChainlinkTriggerFactoryTestSetup {
       360, // 360s frequency tolerance.
       TriggerMetadata(
         "Peg Protection Trigger",
-        "Peg",
         "A trigger that protects from something depegging",
-        "https://via.placeholder.com/150"
+        "https://via.placeholder.com/150",
+        "$category: Peg"
       )
     );
 
