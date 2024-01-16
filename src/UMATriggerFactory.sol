@@ -38,11 +38,11 @@ contract UMATriggerFactory {
   /// answer to the query.
   /// @param proposalDisputeWindow The window of time in seconds within which a proposed answer may be disputed.
   /// @param name The human-readble name of the trigger.
-  /// @param category The category of the trigger.
   /// @param description A human-readable description of the trigger.
   /// @param logoURI The URI of a logo image to represent the trigger.
   /// For other attributes, see the docs for the params of `deployTrigger` in
   /// this contract.
+  /// @param extraData Extra metadata for the trigger.
   event TriggerDeployed(
     address trigger,
     bytes32 indexed triggerConfigId,
@@ -54,9 +54,9 @@ contract UMATriggerFactory {
     uint256 bondAmount,
     uint256 proposalDisputeWindow,
     string name,
-    string category,
     string description,
-    string logoURI
+    string logoURI,
+    string extraData
   );
 
   /// @dev Thrown when the trigger address computed by the factory does not match deployed address.
@@ -140,9 +140,9 @@ contract UMATriggerFactory {
       _bondAmount,
       _proposalDisputeWindow,
       _metadata.name,
-      _metadata.category,
       _metadata.description,
-      _metadata.logoURI
+      _metadata.logoURI,
+      _metadata.extraData
     );
 
     return _vars.trigger;

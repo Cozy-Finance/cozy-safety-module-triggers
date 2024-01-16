@@ -17,27 +17,27 @@ contract OwnableTriggerTest is TriggerTestSetup {
   /// @param trigger The address at which the trigger was deployed.
   /// @param owner The owner of the trigger.
   /// @param name The human-readble name of the trigger.
-  /// @param category The category of the trigger.
   /// @param description A human-readable description of the trigger.
   /// @param logoURI The URI of a logo image to represent the trigger.
   /// For other attributes, see the docs for the params of `deployTrigger` in
   /// this contract.
+  /// @param extraData Extra metadata for the trigger.
   event TriggerDeployed(
-    address trigger, address indexed owner, string name, string category, string description, string logoURI
+    address trigger, address indexed owner, string name, string description, string logoURI, string extraData
   );
 
   function testFuzz_deployOwnableTriggerWithFactory(address _owner, bytes32 _salt) public {
     vm.assume(_owner != address(0));
     TriggerMetadata memory _metadata = TriggerMetadata(
       "Terra hack trigger",
-      "Protocol",
       "A trigger that will toggle if Terra is hacked",
-      "https://via.placeholder.com/150"
+      "https://via.placeholder.com/150",
+      "$category: Protocol"
     );
     address _computedAddress = factory.computeTriggerAddress(_owner, _salt);
     _expectEmit();
     emit TriggerDeployed(
-      _computedAddress, _owner, _metadata.name, _metadata.category, _metadata.description, _metadata.logoURI
+      _computedAddress, _owner, _metadata.name, _metadata.description, _metadata.logoURI, _metadata.extraData
     );
     OwnableTrigger trigger = factory.deployTrigger(_owner, _metadata, _salt);
     assertEq(trigger.owner(), _owner);

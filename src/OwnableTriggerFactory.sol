@@ -9,13 +9,13 @@ contract OwnableTriggerFactory {
   /// @param trigger The address at which the trigger was deployed.
   /// @param owner The owner of the trigger.
   /// @param name The human-readble name of the trigger.
-  /// @param category The category of the trigger.
   /// @param description A human-readable description of the trigger.
   /// @param logoURI The URI of a logo image to represent the trigger.
   /// For other attributes, see the docs for the params of `deployTrigger` in
   /// this contract.
+  /// @param extraData Extra metadata for the trigger.
   event TriggerDeployed(
-    address trigger, address indexed owner, string name, string category, string description, string logoURI
+    address trigger, address indexed owner, string name, string description, string logoURI, string extraData
   );
 
   /// @notice Deploys a new OwnableTrigger contract with the supplied owner and deploy salt.
@@ -28,7 +28,7 @@ contract OwnableTriggerFactory {
   {
     _trigger = new OwnableTrigger{salt: _salt}(_owner);
     emit TriggerDeployed(
-      address(_trigger), _owner, _metadata.name, _metadata.category, _metadata.description, _metadata.logoURI
+      address(_trigger), _owner, _metadata.name, _metadata.description, _metadata.logoURI, _metadata.extraData
     );
   }
 
