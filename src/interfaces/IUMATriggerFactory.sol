@@ -1,8 +1,6 @@
-// SPDX-License-Identifier: Unlicensed
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
-import {FinderInterface} from
-  "uma-protocol/packages/core/contracts/data-verification-mechanism/interfaces/FinderInterface.sol";
 import {IERC20} from "./IERC20.sol";
 import {IUMATrigger} from "./IUMATrigger.sol";
 import {TriggerMetadata} from "../structs/Triggers.sol";
@@ -49,9 +47,6 @@ interface IUMATriggerFactory {
     string description,
     string logoURI
   );
-
-  /// @notice The UMA contract used to lookup the UMA Optimistic Oracle.
-  function oracleFinder() external view returns (FinderInterface);
 
   /// @notice Maps triggerConfigIds to whether an UMATrigger has been created with the related config.
   function exists(bytes32) external view returns (bool);
