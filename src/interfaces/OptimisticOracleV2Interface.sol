@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-only
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity ^0.8.0;
 
 // A named import is used to avoid identifier naming conflicts between IERC20 imports. solc throws a DeclarationError
@@ -7,65 +7,8 @@ pragma solidity ^0.8.0;
 // imports an IERC20 interface with "import src/interfaces/IERC20.sol;", but in this project we import the same
 // interface with "import cozy-v2-interfaces/interfaces/IERC20.sol;", a DeclarationError will be thrown.
 import { IERC20 } from "./IERC20.sol";
-import "uma-protocol/packages/core/contracts/data-verification-mechanism/interfaces/FinderInterface.sol";
 
-/**
- * @title Financial contract facing Oracle interface.
- * @dev Interface used by financial contracts to interact with the Oracle. Voters will use a different interface.
- * @dev Modified from uma-protocol to use Cozy's implementation of IERC20 instead of OpenZeppelin's. Cozy's IERC20
- * conforms to Cozy's implementation of ERC20, which was modified from Solmate to use an initializer to support
- * usage as a minimal proxy.
- */
 abstract contract OptimisticOracleV2Interface {
-    event RequestPrice(
-        address indexed requester,
-        bytes32 identifier,
-        uint256 timestamp,
-        bytes ancillaryData,
-        address currency,
-        uint256 reward,
-        uint256 finalFee
-    );
-    event ProposePrice(
-        address indexed requester,
-        address indexed proposer,
-        bytes32 identifier,
-        uint256 timestamp,
-        bytes ancillaryData,
-        int256 proposedPrice,
-        uint256 expirationTimestamp,
-        address currency
-    );
-    event DisputePrice(
-        address indexed requester,
-        address indexed proposer,
-        address indexed disputer,
-        bytes32 identifier,
-        uint256 timestamp,
-        bytes ancillaryData,
-        int256 proposedPrice
-    );
-    event Settle(
-        address indexed requester,
-        address indexed proposer,
-        address indexed disputer,
-        bytes32 identifier,
-        uint256 timestamp,
-        bytes ancillaryData,
-        int256 price,
-        uint256 payout
-    );
-    // Struct representing the state of a price request.
-    enum State {
-        Invalid, // Never requested.
-        Requested, // Requested, no other actions taken.
-        Proposed, // Proposed, but not expired or disputed yet.
-        Expired, // Proposed, not disputed, past liveness.
-        Disputed, // Disputed, but no DVM price returned yet.
-        Resolved, // Disputed and DVM price is available.
-        Settled // Final price has been set in the contract (can get here from Expired or Resolved).
-    }
-
     struct RequestSettings {
         bool eventBased; // True if the request is set to be event-based.
         bool refundOnDispute; // True if the requester should be refunded their reward on dispute.
@@ -89,20 +32,6 @@ abstract contract OptimisticOracleV2Interface {
         uint256 reward; // Amount of the currency to pay to the proposer on settlement.
         uint256 finalFee; // Final fee to pay to the Store upon request to the DVM.
     }
-
-    // This value must be <= the Voting contract's `ancillaryBytesLimit` value otherwise it is possible
-    // that a price can be requested to this contract successfully, but cannot be disputed because the DVM refuses
-    // to accept a price request made with ancillary data length over a certain size.
-    uint256 public constant ancillaryBytesLimit = 8192;
-
-    function defaultLiveness() external view virtual returns (uint256);
-
-    function finder() external view virtual returns (FinderInterface);
-
-    function getCurrentTime() external view virtual returns (uint256);
-
-    // Note: this is required so that typechain generates a return value with named fields.
-    mapping(bytes32 => Request) public requests;
 
     /**
      * @notice Requests a new price.
@@ -139,20 +68,6 @@ abstract contract OptimisticOracleV2Interface {
         bytes memory ancillaryData,
         uint256 bond
     ) external virtual returns (uint256 totalBond);
-
-    /**
-     * @notice Sets the request to refund the reward if the proposal is disputed. This can help to "hedge" the caller
-     * in the event of a dispute-caused delay. Note: in the event of a dispute, the winner still receives the other's
-     * bond, so there is still profit to be made even if the reward is refunded.
-     * @param identifier price identifier to identify the existing request.
-     * @param timestamp timestamp to identify the existing request.
-     * @param ancillaryData ancillary data of the price being requested.
-     */
-    function setRefundOnDispute(
-        bytes32 identifier,
-        uint256 timestamp,
-        bytes memory ancillaryData
-    ) external virtual;
 
     /**
      * @notice Sets a custom liveness value for the request. Liveness is the amount of time a proposal must wait before
@@ -211,27 +126,6 @@ abstract contract OptimisticOracleV2Interface {
     ) external virtual;
 
     /**
-     * @notice Proposes a price value on another address' behalf. Note: this address will receive any rewards that come
-     * from this proposal. However, any bonds are pulled from the caller.
-     * @param proposer address to set as the proposer.
-     * @param requester sender of the initial price request.
-     * @param identifier price identifier to identify the existing request.
-     * @param timestamp timestamp to identify the existing request.
-     * @param ancillaryData ancillary data of the price being requested.
-     * @param proposedPrice price being proposed.
-     * @return totalBond the amount that's pulled from the caller's wallet as a bond. The bond will be returned to
-     * the proposer once settled if the proposal is correct.
-     */
-    function proposePriceFor(
-        address proposer,
-        address requester,
-        bytes32 identifier,
-        uint256 timestamp,
-        bytes memory ancillaryData,
-        int256 proposedPrice
-    ) public virtual returns (uint256 totalBond);
-
-    /**
      * @notice Proposes a price value for an existing price request.
      * @param requester sender of the initial price request.
      * @param identifier price identifier to identify the existing request.
@@ -250,25 +144,6 @@ abstract contract OptimisticOracleV2Interface {
     ) external virtual returns (uint256 totalBond);
 
     /**
-     * @notice Disputes a price request with an active proposal on another address' behalf. Note: this address will
-     * receive any rewards that come from this dispute. However, any bonds are pulled from the caller.
-     * @param disputer address to set as the disputer.
-     * @param requester sender of the initial price request.
-     * @param identifier price identifier to identify the existing request.
-     * @param timestamp timestamp to identify the existing request.
-     * @param ancillaryData ancillary data of the price being requested.
-     * @return totalBond the amount that's pulled from the caller's wallet as a bond. The bond will be returned to
-     * the disputer once settled if the dispute was value (the proposal was incorrect).
-     */
-    function disputePriceFor(
-        address disputer,
-        address requester,
-        bytes32 identifier,
-        uint256 timestamp,
-        bytes memory ancillaryData
-    ) public virtual returns (uint256 totalBond);
-
-    /**
      * @notice Disputes a price value for an existing price request with an active proposal.
      * @param requester sender of the initial price request.
      * @param identifier price identifier to identify the existing request.
@@ -283,21 +158,6 @@ abstract contract OptimisticOracleV2Interface {
         uint256 timestamp,
         bytes memory ancillaryData
     ) external virtual returns (uint256 totalBond);
-
-    /**
-     * @notice Retrieves a price that was previously requested by a caller. Reverts if the request is not settled
-     * or settleable. Note: this method is not view so that this call may actually settle the price request if it
-     * hasn't been settled.
-     * @param identifier price identifier to identify the existing request.
-     * @param timestamp timestamp to identify the existing request.
-     * @param ancillaryData ancillary data of the price being requested.
-     * @return resolved price.
-     */
-    function settleAndGetPrice(
-        bytes32 identifier,
-        uint256 timestamp,
-        bytes memory ancillaryData
-    ) external virtual returns (int256);
 
     /**
      * @notice Attempts to settle an outstanding price request. Will revert if it isn't settleable.
@@ -331,21 +191,6 @@ abstract contract OptimisticOracleV2Interface {
     ) public view virtual returns (Request memory);
 
     /**
-     * @notice Returns the state of a price request.
-     * @param requester sender of the initial price request.
-     * @param identifier price identifier to identify the existing request.
-     * @param timestamp timestamp to identify the existing request.
-     * @param ancillaryData ancillary data of the price being requested.
-     * @return the State enum value.
-     */
-    function getState(
-        address requester,
-        bytes32 identifier,
-        uint256 timestamp,
-        bytes memory ancillaryData
-    ) public view virtual returns (State);
-
-    /**
      * @notice Checks if a given request has resolved or been settled (i.e the optimistic oracle has a price).
      * @param requester sender of the initial price request.
      * @param identifier price identifier to identify the existing request.
@@ -359,10 +204,4 @@ abstract contract OptimisticOracleV2Interface {
         uint256 timestamp,
         bytes memory ancillaryData
     ) public view virtual returns (bool);
-
-    function stampAncillaryData(bytes memory ancillaryData, address requester)
-        public
-        view
-        virtual
-        returns (bytes memory);
 }
